@@ -26,11 +26,7 @@ export class PokemonService {
 
     }catch(error){
      
-      if(error.code === 11000 ){
-        throw new BadRequestException(`Pokemon: "${ JSON.stringify(error.keyValue)}" already exists`);
-      }
-      throw new InternalServerErrorException('Cannot create pokemon - Check server logs');
-
+      this.handleExepections(error);
     }
   }
 
@@ -73,21 +69,48 @@ export class PokemonService {
     //Buscar pokemon
     const pokemon = await this.findOne(term); 
 
+    
     //Si viene en nombre lo guarda en minisculas
     if( updatePokemonDto.name )
       updatePokemonDto.name = updatePokemonDto.name.toLocaleLowerCase();
     
-    //Actualizarlo mediante el servicio
-    await pokemon.updateOne(updatePokemonDto);
+    try{
+     
+      //Actualizarlo mediante el servicio
+      await pokemon.updateOne(updatePokemonDto);
 
-    //Copiar el pokemon y sobrescribir el DTO
-    return {...pokemon.toJSON(), ...updatePokemonDto};
+      //Copiar el pokemon y sobrescribir el DTO
+      return {...pokemon.toJSON(), ...updatePokemonDto};
+
+    } catch(error){
+      
+      this.handleExepections(error);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} pokemon`;
+  async remove(id: string) {
+    //saber si id existe
+
+    const pokemon = await this.findOne(id);
+    await pokemon.deleteOne();
+
+    return `pokemon with id/name or number "${id}" deleted succesfully`;
+  }
+
+  //Exepcion no controlada
+  private handleExepections( error:any){
+   
+    if( error.code === 11000){ 
+      throw new BadRequestException(`Pokemon exits in db ${ JSON.stringify(error.keyValue )}`);
+    }
+      console.log(error);
+      throw new InternalServerErrorException(`Can't create Pokemon - Check server logs`);
+    
   }
 }
+
+
+
 function IncyectModel(target: typeof PokemonService, propertyKey: undefined, parameterIndex: 0): void {
   throw new Error('Function not implemented.');
 }
