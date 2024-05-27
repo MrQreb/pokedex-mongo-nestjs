@@ -5,6 +5,7 @@ import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 import { isValidObjectId, Model } from 'mongoose'; //permite definir el tipo de dato que se va a guardar en la base de datos
 import { Pokemon } from './entities/pokemon.entity'; // Importar la entidad Pokemon
 import { InjectModel } from '@nestjs/mongoose'; // Add the missing import
+import * as request from 'supertest';
 
 @Injectable()
 export class PokemonService {
@@ -89,12 +90,26 @@ export class PokemonService {
   }
 
   async remove(id: string) {
+    
+    //Usando doble consulta
+
     //saber si id existe
+    // const pokemon = await this.findOne(id);
+    // await pokemon.deleteOne();
+    // return `pokemon with id/name or number "${id}" deleted succesfully`;
 
-    const pokemon = await this.findOne(id);
-    await pokemon.deleteOne();
+    
+    //Validando la elmiminacion con una sola consulta
+    //Usando deleteOne y desestructurando el resultado
+    const { deletedCount, acknowledged } = await this.pokemonModel.deleteOne({ _id:id });
 
-    return `pokemon with id/name or number "${id}" deleted succesfully`;
+    //Si se manda que no se elimino ninguno
+    if( deletedCount === 0 ){
+      throw new BadRequestException(`Pokemon with id/name or number "${id}" not found`);
+    }
+
+    return;
+
   }
 
   //Exepcion no controlada
