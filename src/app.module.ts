@@ -14,7 +14,7 @@ import { SeedModule } from './seed/seed.module';
     }),
 
     //Credenciales para conectarse con la BD
-    MongooseModule.forRoot('mongodb://localhost:27017/nest-pokemon'),
+    MongooseModule.forRoot('mongodb://localhost:27018/nest-pokemon-2'),
 
     PokemonModule,
 

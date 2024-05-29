@@ -5,8 +5,8 @@ services:
     image: mongo:5
     restart: always
     ports:
-      - 27017:27017
+      - 27018:27017  # Cambia el puerto externo para evitar conflictos
     environment:
-      MONGODB_DATABASE: nest-pokemon
+      MONGODB_DATABASE: nest-pokemon-2  # Cambia el nombre de la base de datos para evitar conflictos
     volumes:
-      - ./mongo:/data/db
+      - ./mongo:/data/db  # Cambia el directorio del volumen para evitar conflictos
