@@ -19,5 +19,10 @@ import { MongooseModule } from '@nestjs/mongoose';
         }
     ])
   ],
+  
+  //Exportamos el modulo de mongoose para poder usarlo en otros modulos
+  exports:[
+    MongooseModule
+  ]
 })
 export class PokemonModule {}
