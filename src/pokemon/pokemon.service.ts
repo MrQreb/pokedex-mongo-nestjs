@@ -1,10 +1,13 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, Query } from '@nestjs/common';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 
 import { isValidObjectId, Model } from 'mongoose'; //permite definir el tipo de dato que se va a guardar en la base de datos
 import { Pokemon } from './entities/pokemon.entity'; // Importar la entidad Pokemon
 import { InjectModel } from '@nestjs/mongoose'; // Add the missing import
+
+// Importar el DTO de paginación
+import { PaginationDto } from '../common/dto/pagination.dto';
 import * as request from 'supertest';
 
 @Injectable()
@@ -31,8 +34,21 @@ export class PokemonService {
     }
   }
 
-  async findAll() {
-    return await this.pokemonModel.find();
+  async findAll( paginationDto: PaginationDto) {
+   
+    //Desestructurar el objeto y asignar valores por defecto
+    const { limit = 10, offset = 0} = paginationDto;
+   
+    return await this.pokemonModel.find()
+      .limit( limit )
+      .skip( offset )
+      
+      
+      .sort({
+        //Ordernar de forma ascendente 
+        no:1 
+      })
+      .select('-__v') //Omitir el campo __v
   }
 
   //Busca en base id, mongo id o nombre
