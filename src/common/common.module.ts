@@ -9,7 +9,7 @@ import { AxiosAdapter } from './adapters/axios.adapter';
 
 @Module({
     
-    //Exportamos el servicio para poder inyectarlo en otros modulos
+    //Providers => Servicios que se inyectaran en otros modulos
     providers: [AxiosAdapter],
 
     //Exportamos el servicio para poder inyectarlo en otros modulos
